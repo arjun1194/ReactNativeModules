@@ -1,4 +1,12 @@
 package com.myapp.nativePackages.videoUploadWorker
 
-class VideoUploadResposne {
+data class VideoUploadResponse(
+    val status: String,
+    val data: Data,
+) {
+    data class Data(
+        val id: Int,
+        val title: String,
+        val description: String
+    )
 }

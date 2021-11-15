@@ -138,6 +138,7 @@ android {
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"
+        missingDimensionStrategy 'react-native-camera', 'general' // <--- insert this line
     }
     splits {
         abi {
@@ -188,6 +189,10 @@ android {
 
         }
     }
+
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
 }
 
 dependencies {
@@ -196,10 +201,19 @@ dependencies {
     implementation "com.facebook.react:react-native:+"  // From node_modules
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutinesVersion"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion"
+    implementation "androidx.work:work-runtime-ktx:2.7.0"
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+    implementation "com.squareup.okhttp3:logging-interceptor:4.9.2"
+    implementation 'com.squareup.retrofit2:converter-gson:2.6.0'
+    implementation 'com.github.AbedElazizShe:LightCompressor:0.9.9'
+
+
 
 
 
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
+    testImplementation 'org.junit.jupiter:junit-jupiter'
 
     debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}") {
         exclude group:'com.facebook.fbjni'

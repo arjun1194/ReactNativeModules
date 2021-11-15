@@ -3,7 +3,6 @@ package com.myapp.nativePackages.videoCompression
 import android.util.Log
 import com.facebook.react.bridge.*
 import com.facebook.react.modules.core.DeviceEventManagerModule
-import com.myapp.nativePackages.common.EventEmitter
 
 class CallbackMethodModule(context: ReactApplicationContext?) :
     ReactContextBaseJavaModule(context) {

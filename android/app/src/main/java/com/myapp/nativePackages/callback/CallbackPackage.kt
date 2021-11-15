@@ -10,7 +10,8 @@ import com.facebook.react.uimanager.ViewManager
 class CallbackPackage : ReactPackage {
     override fun createNativeModules(reactContext: ReactApplicationContext): MutableList<NativeModule> =
         arrayListOf(
-            CallbackModule(reactContext)
+            CallbackModule(reactContext),
+            CallbackAndPromise(reactContext)
         )
 
     override fun createViewManagers(reactContext: ReactApplicationContext): MutableList<ViewManager<View, ReactShadowNode<*>>> =

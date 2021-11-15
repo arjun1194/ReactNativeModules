@@ -1,7 +1,13 @@
 package com.myapp;
 
 import android.app.Application;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Context;
+import android.media.AudioAttributes;
+import android.media.RingtoneManager;
+import android.net.Uri;
+import android.os.Build;
 
 import com.facebook.react.PackageList;
 import com.facebook.react.ReactApplication;
@@ -9,15 +15,18 @@ import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.soloader.SoLoader;
-import com.myapp.nativePackages.api.ApiPackage;
 import com.myapp.nativePackages.callback.CallbackPackage;
 import com.myapp.nativePackages.toast.ToastPackage;
 import com.myapp.nativePackages.videoCompression.VideoPackage;
+import com.myapp.nativePackages.videoUploadWorker.VideoUploadWorkerReactPackage;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 public class MainApplication extends Application implements ReactApplication {
+
+    // channel id for main notification channel
+    public static final String MainChannel = "main_channel";
 
   private final ReactNativeHost mReactNativeHost =
       new ReactNativeHost(this) {
@@ -32,9 +41,9 @@ public class MainApplication extends Application implements ReactApplication {
           List<ReactPackage> packages = new PackageList(this).getPackages();
           // Packages that cannot be autolinked yet can be added manually here, for example:
            packages.add(new ToastPackage());
-           packages.add(new ApiPackage());
            packages.add(new VideoPackage());
            packages.add(new CallbackPackage());
+           packages.add(new VideoUploadWorkerReactPackage());
           return packages;
         }
 
@@ -54,9 +63,32 @@ public class MainApplication extends Application implements ReactApplication {
     super.onCreate();
     SoLoader.init(this, /* native exopackage */ false);
     initializeFlipper(this, getReactNativeHost().getReactInstanceManager());
+    createChannel();
   }
 
-  /**
+    public void createChannel() {
+
+        Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        NotificationManager notificationManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+        // Since android Oreo notification channel is needed.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel(
+                    MainChannel,
+                    "Main Channel",
+                    NotificationManager.IMPORTANCE_HIGH
+            );
+            AudioAttributes attrs = new AudioAttributes
+                    .Builder()
+                    .build();
+            channel.setSound(defaultSoundUri, attrs);
+            notificationManager.createNotificationChannel(channel);
+        }
+    }
+
+
+    /**
    * Loads Flipper in React Native templates. Call this in the onCreate method with something like
    * initializeFlipper(this, getReactNativeHost().getReactInstanceManager());
    *

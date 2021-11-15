@@ -1,4 +1,4 @@
-package com.myapp.nativePackages;
+package com.myapp.utils;
 
 import android.content.ContentResolver;
 import android.net.Uri;
