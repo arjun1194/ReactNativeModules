@@ -1,5 +1,6 @@
-package com.myapp.nativePackages.videoUploadWorker
+package com.myapp.data
 
+import com.myapp.data.model.response.VideoUploadResponse
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -32,6 +33,7 @@ interface VideoUploadService {
            return Retrofit.Builder()
                 .addConverterFactory(GsonConverterFactory.create())
                 .baseUrl("http://10.0.2.2:8080/")
+                //.baseUrl("http://192.168.1.42:8080/")
                 .client(client)
                 .build()
                 .create(VideoUploadService::class.java)

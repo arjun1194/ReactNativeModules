@@ -1,5 +1,8 @@
-package com.myapp.nativePackages.videoUploadWorker
+package com.myapp.data.model.response
 
+import androidx.annotation.Keep
+
+@Keep
 data class VideoUploadResponse(
     val status: String,
     val data: Data,

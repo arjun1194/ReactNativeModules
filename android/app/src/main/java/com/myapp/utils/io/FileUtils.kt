@@ -1,7 +1,5 @@
-package com.myapp.utils
+package com.myapp.utils.io
 
-import android.R.attr
-import android.R.attr.path
 import android.annotation.SuppressLint
 
 import android.content.ContentResolver
@@ -11,13 +9,17 @@ import android.net.Uri
 
 import android.provider.MediaStore
 import android.provider.OpenableColumns
+import com.myapp.utils.workers.WorkerConstants
 import java.io.File
 import java.io.FileOutputStream
+import java.io.IOException
 import java.text.DecimalFormat
 import kotlin.math.log10
 import kotlin.math.pow
 
-
+fun File.sizeInMB(): Float {
+    return length() / (1024 * 1024).toFloat()
+}
 fun Uri.contentSchemeNameAndSize(contentResolver: ContentResolver): Pair<String, Int>? {
     return contentResolver.query(this, null, null, null, null)?.use { cursor ->
         if (!cursor.moveToFirst()) return@use null
@@ -45,8 +47,7 @@ fun getMediaPath(context: Context, uri: Uri): String {
 
     } catch (e: Exception) {
         resolver.let {
-            val filePath = (context.applicationInfo.dataDir + File.separator
-                    + System.currentTimeMillis())
+            val filePath = (context.applicationInfo.dataDir + File.separator + WorkerConstants.TEMP_FILENAME)
             val file = File(filePath)
 
             resolver.openInputStream(uri)?.use { inputStream ->
@@ -104,4 +105,20 @@ fun ContentResolver.getContentFileName(contentUri: Uri): String {
         }
     }
     return result!!
+}
+
+fun Context.saveVideoFile(videoFileName: String): File {
+    val path = applicationContext.filesDir
+    val desFile = File(path, videoFileName)
+
+    if (desFile.exists())
+        desFile.delete()
+
+    try {
+        desFile.createNewFile()
+    } catch (e: IOException) {
+        e.printStackTrace()
+    }
+
+    return desFile
 }

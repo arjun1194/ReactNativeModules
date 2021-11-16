@@ -1,19 +1,10 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * Generated with the TypeScript template
- * https://github.com/react-native-community/react-native-template-typescript
- *
- * @format
- */
-
 import React from 'react';
 import {
   Button,
   EmitterSubscription,
   NativeEventEmitter,
   NativeModules,
+  ScrollView,
   StyleSheet,
   Text,
   ToastAndroid,
@@ -24,25 +15,29 @@ import {launchImageLibrary} from 'react-native-image-picker';
 
 interface IAppState {
   uris: string[];
+  logs: string[];
   isUploading: boolean;
   uploadProgress: 0.0;
 }
-class App extends React.Component {
+class UploadScreen extends React.Component {
   state: IAppState;
   private eventListener: EmitterSubscription | null;
   constructor(props: any) {
     super(props);
     this.eventListener = null;
     this.state = {
+      logs: [],
       uris: [],
       isUploading: false,
       uploadProgress: 0.0,
     };
   }
   componentDidMount() {
+    this.log('Starting Logs!');
     const eventEmitter = new NativeEventEmitter(NativeModules.WorkManager);
     this.eventListener = eventEmitter.addListener('video_progress', event => {
-      console.log(event);
+      this.clearLogs();
+      this.log(`Progress --> ${event.progress}`);
       this.setState({uploadProgress: event.progress});
       if (event.progress === 100.0) {
         this.setState({isUploading: false});
@@ -59,17 +54,21 @@ class App extends React.Component {
     this.setState({isUploading: true});
   }
 
+  log(message: string) {
+    this.state.logs.push(message);
+  }
+
   render() {
-    const {uris, isUploading, uploadProgress} = this.state;
+    const {uris, logs} = this.state;
     return (
       <>
-        <View style={styles.column}>
+        <View style={{...styles.row, justifyContent: 'center'}}>
           <View style={styles.button}>
             <Button
-              disabled={isUploading}
               title={'Enqueue Work'}
               onPress={() => {
                 if (uris.length > 0) {
+                  this.log('Enqueue started');
                   this.enqueueUpload(uris);
                 } else {
                   ToastAndroid.show('Pass some uris', 1000);
@@ -81,10 +80,13 @@ class App extends React.Component {
             <Button
               title={'Select Media'}
               onPress={() => {
+                this.log('Opening Gallery Picker!');
                 launchImageLibrary(
                   {mediaType: 'video', selectionLimit: 20},
                   response => {
                     const uri = response.assets?.map(it => it.uri);
+                    const fileName = response.assets?.map(it => it.fileName);
+                    this.log(`file picked  ---> ${fileName}`);
                     this.setState({uris: uri});
                   },
                 );
@@ -92,28 +94,51 @@ class App extends React.Component {
             />
           </View>
         </View>
-        <View style={styles.column}>
-          {!isUploading ? (
-            <Text>{JSON.stringify(uris)}</Text>
-          ) : (
-            <Text>UploadProgress: {uploadProgress}</Text>
-          )}
+        <View style={{...styles.column, flex: 1, backgroundColor: '#fafafa'}}>
+          <Text style={styles.h1}>Logs</Text>
+          <ScrollView style={{marginTop: 10}}>
+            {logs.map(log => (
+              <View style={styles.row}>
+                <Text style={{...styles.caption, paddingHorizontal: 10}}>
+                  {new Date().toTimeString()}
+                </Text>
+                <Text style={{alignSelf: 'center', color: 'black'}}>{log}</Text>
+              </View>
+            ))}
+          </ScrollView>
         </View>
       </>
     );
   }
+
+  private clearLogs() {
+    this.setState({logs: []});
+  }
 }
 
 const styles = StyleSheet.create({
-  column: {
-    flex: 1,
-    justifyContent: 'center',
+  row: {
     flexDirection: 'row',
+    color: 'black',
+  },
+  column: {
+    flexDirection: 'column',
   },
   button: {
     marginVertical: 10,
     marginHorizontal: 20,
   },
+
+  h1: {
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
+
+  caption: {
+    fontWeight: '400',
+    color: '#5a5a5a',
+    fontSize: 12,
+  },
 });
 
-export default App;
+export default UploadScreen;

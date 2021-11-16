@@ -17,7 +17,7 @@ class CallbackAndPromise(reactContext: ReactApplicationContext?): ReactContextBa
 
     @ReactMethod
     fun saySomething(name: String) {
-        Toast.makeText(reactApplicationContext,name,Toast.LENGTH_LONG).show();
+        Toast.makeText(reactApplicationContext,name,Toast.LENGTH_LONG).show()
     }
 
     @ReactMethod

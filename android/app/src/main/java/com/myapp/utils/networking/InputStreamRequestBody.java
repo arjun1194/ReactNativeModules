@@ -1,4 +1,4 @@
-package com.myapp.utils;
+package com.myapp.utils.networking;
 
 import android.content.ContentResolver;
 import android.net.Uri;

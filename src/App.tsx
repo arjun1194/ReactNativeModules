@@ -1,18 +1,15 @@
-import React, { Component } from "react";
+import React from 'react';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import UploadScreen from './UploadScreen';
 
-class App extends React.Component<any, any> {
-  constructor(props) {
+class App extends React.Component {
+  constructor(props: any) {
     super(props);
-
   }
 
   render() {
-    return (
-     <>
-       </>
-    );
+    return <UploadScreen />;
   }
 }
-
 
 export default App;
